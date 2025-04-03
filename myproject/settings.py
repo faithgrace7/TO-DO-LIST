@@ -28,7 +28,7 @@ SECRET_KEY = 'django-insecure-u5t7e0dxvk_7&z)=azp7=m%%fz=tg93d%807bt8vg#paptps$x
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['https://to-do-list-8-ddtj.onrender.com', '127.0.0.1', 'localhost']
+ALLOWED_HOSTS = ['to-do-list-8-ddtj.onrender.com', '127.0.0.1', 'localhost']
 
 CORS_ALLOW_ALL_ORIGINS = True
 
