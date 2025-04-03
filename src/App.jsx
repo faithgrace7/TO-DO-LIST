@@ -16,36 +16,84 @@ export default function App() {
     localStorage.setItem("theme", darkMode ? "dark" : "light");
   }, [darkMode]);
 
-  const addTask = () => {
+  // Fetch tasks from Django API
+  useEffect(() => {
+    const fetchTasks = async () => {
+      const response = await fetch("http://localhost:8000/api/todos/fetch");
+      const data = await response.json();
+      setTasks(data);
+    };
+    fetchTasks();
+  }, []);
+
+  // Add Task (POST)
+  const addTask = async () => {
     if (task.trim() === "") return;
-    setTasks([...tasks, { text: task, completed: false }]);
+
+    const newTask = { title: task, completed: false };
+
+    const response = await fetch("http://localhost:8000/api/todos/create", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(newTask),
+    });
+
+    const data = await response.json();
+    setTasks([...tasks, data]);
     setTask("");
   };
 
-  const removeTask = (index) => {
-    setTasks(tasks.filter((_, i) => i !== index));
+  // Remove Task (DELETE)
+  const removeTask = async (taskId) => {
+    await fetch(`http://localhost:8000/api/todos/${taskId}/delete`, {
+      method: "DELETE",
+    });
+    setTasks(tasks.filter((task) => task.id !== taskId));
   };
 
-  const toggleComplete = (index) => {
-    setTasks(
-      tasks.map((t, i) =>
-        i === index ? { ...t, completed: !t.completed } : t
-      )
+  // Toggle Task Completion (PUT)
+  const toggleComplete = async (taskId) => {
+    const task = tasks.find((t) => t.id === taskId);
+    const updatedTask = { ...task, completed: !task.completed };
+
+    const response = await fetch(
+      `http://localhost:8000/api/todos/${taskId}/update`,
+      {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(updatedTask),
+      }
     );
+
+    const data = await response.json();
+    setTasks(tasks.map((task) => (task.id === taskId ? data : task)));
   };
 
-  const editTask = (index) => {
-    setEditingIndex(index);
-    setEditedTask(tasks[index].text);
+  // Edit Task (Enable Editing)
+  const editTask = (taskId, text) => {
+    setEditingIndex(taskId);
+    setEditedTask(text);
   };
 
-  const saveEditedTask = (index) => {
-    setTasks(
-      tasks.map((t, i) => (i === index ? { ...t, text: editedTask } : t))
+  // Save Edited Task (PUT)
+  const saveEditedTask = async (taskId) => {
+    const updatedTask = { title: editedTask, completed: false };
+
+    const response = await fetch(
+      `http://localhost:8000/api/todos/${taskId}/update`,
+      {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(updatedTask),
+      }
     );
+
+    const data = await response.json();
+    setTasks(tasks.map((task) => (task.id === taskId ? data : task)));
     setEditingIndex(null);
   };
 
+  // Filtered Tasks
   const filteredTasks = tasks.filter((task) => {
     if (filter === "completed") return task.completed;
     if (filter === "pending") return !task.completed;
@@ -88,27 +136,29 @@ export default function App() {
         </button>
       </div>
       <ul className="task-list">
-        {filteredTasks.map((t, index) => (
-          <li key={index} className={t.completed ? "completed" : ""}>
+        {filteredTasks.map((task) => (
+          <li key={task.id} className={task.completed ? "completed" : ""}>
             <input
               type="checkbox"
-              checked={t.completed}
-              onChange={() => toggleComplete(index)}
+              checked={task.completed}
+              onChange={() => toggleComplete(task.id)}
             />
-            {editingIndex === index ? (
+            {editingIndex === task.id ? (
               <>
                 <input
                   type="text"
                   value={editedTask}
                   onChange={(e) => setEditedTask(e.target.value)}
                 />
-                <button onClick={() => saveEditedTask(index)}>Save</button>
+                <button onClick={() => saveEditedTask(task.id)}>Save</button>
               </>
             ) : (
               <>
-                <span>{t.text}</span>
-                <button onClick={() => editTask(index)}>Edit</button>
-                <button onClick={() => removeTask(index)}>Delete</button>
+                <span>{task.title}</span>
+                <button onClick={() => editTask(task.id, task.title)}>
+                  Edit
+                </button>
+                <button onClick={() => removeTask(task.id)}>Delete</button>
               </>
             )}
           </li>
