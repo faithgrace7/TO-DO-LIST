@@ -28,7 +28,7 @@ SECRET_KEY = 'django-insecure-u5t7e0dxvk_7&z)=azp7=m%%fz=tg93d%807bt8vg#paptps$x
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['to-do-list-8-ddtj.onrender.com']
+ALLOWED_HOSTS = ['to-do-list-8-ddtj.onrender.com','localhost', '127.0.0.1']
 
 CORS_ALLOW_ALL_ORIGINS = True
 
@@ -42,11 +42,13 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'corsheaders',
     'myapp',
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',  # Add this here
     'django.contrib.sessions.middleware.SessionMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -120,18 +122,9 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
 STATIC_URL = '/static/'
-
-# This is for production when running `collectstatic`
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')  # ✅ Change to avoid conflict
-
-# This is for development where Django looks for static files
-STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'static')  # ✅ This is fine now
-]
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
-
-
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
