@@ -21,7 +21,7 @@ export default function App() {
   // Fetch tasks from Django API
   useEffect(() => {
     const fetchTasks = async () => {
-      const response = await fetch("http://localhost:8000/api/todos/fetch");
+      const response = await fetch("https://to-do-list-8-ddtj.onrender.com/api/todos/fetch");
       const data = await response.json();
       setTasks(data);
     };
