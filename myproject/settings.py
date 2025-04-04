@@ -120,9 +120,18 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
 STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+
+# This is for production when running `collectstatic`
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')  # ✅ Change to avoid conflict
+
+# This is for development where Django looks for static files
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'static')  # ✅ This is fine now
+]
 
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
