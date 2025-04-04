@@ -19,7 +19,7 @@ export default function App() {
   // Fetch tasks from Django API
   useEffect(() => {
     const fetchTasks = async () => {
-      const response = await fetch("http://localhost:8000/api/todos/fetch");
+      const response = await fetch("https://to-do-list-8-ddtj.onrender.com/api/todos/fetch");
       const data = await response.json();
       setTasks(data);
     };
@@ -32,7 +32,7 @@ export default function App() {
 
     const newTask = { title: task, completed: false };
 
-    const response = await fetch("http://localhost:8000/api/todos/create", {
+    const response = await fetch("https://to-do-list-8-ddtj.onrender.com/api/todos/create", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(newTask),
@@ -45,7 +45,7 @@ export default function App() {
 
   // Remove Task (DELETE)
   const removeTask = async (taskId) => {
-    await fetch(`http://localhost:8000/api/todos/${taskId}/delete`, {
+    await fetch(`https://to-do-list-8-ddtj.onrender.com/api/todos/${taskId}/delete`, {
       method: "DELETE",
     });
     setTasks(tasks.filter((task) => task.id !== taskId));
@@ -57,7 +57,7 @@ export default function App() {
     const updatedTask = { ...task, completed: !task.completed };
 
     const response = await fetch(
-      `http://localhost:8000/api/todos/${taskId}/update`,
+      `https://to-do-list-8-ddtj.onrender.com/api/todos/${taskId}/update`,
       {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
@@ -80,7 +80,7 @@ export default function App() {
     const updatedTask = { title: editedTask, completed: false };
 
     const response = await fetch(
-      `http://localhost:8000/api/todos/${taskId}/update`,
+      `https://to-do-list-8-ddtj.onrender.com/api/todos/${taskId}/update`,
       {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
